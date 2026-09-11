@@ -21,7 +21,7 @@
 #   synthetic 32×32 images made of coloured rectangles and blobs (nothing is downloaded) and
 #   dictionaries of 32 to 128 atoms. Its numbers test the code, not the paper's claims.
 # * `"full"`: CIFAR-10 through torchvision, dictionaries of 1024 to 4096 atoms, 30 epochs per
-#   model. Roughly 30 to 60 minutes on a free Colab T4.
+#   model. Roughly 30 to 60 minutes on a T4.
 #
 # **Outputs.** Every trained model, its per-epoch history and every table and figure are written
 # to `results/`. Expensive steps are cached there, so re-running the notebook after a Colab

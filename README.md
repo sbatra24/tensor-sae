@@ -12,11 +12,11 @@ Tensor-SAE keeps the encoder and the sparse latents but forces every atom to be 
 
 ## What is in the notebook
 
-`TensorSAE_reproduction.ipynb` is one Colab notebook generated from `tensor_sae_colab.py` by `build_notebook.py`, so the `.py` file is the one to edit.
+`TensorSAE_reproduction.ipynb` is generated from `tensor_sae_colab.py` by `build_notebook.py`, so the `.py` file is the one to edit.
 
 It builds the three models (Tensor-SAE with the factorised einsum decoder, Dense-SAE with a parameter-matched dictionary, ConvAE with a parameter-matched width), trains one triple per dictionary size on CIFAR-10 and tracks reconstruction MSE, PSNR, L0, dead-latent fraction and intervention strength after every epoch. It then produces every measurement the abstract names: reconstruction quality against parameters and against FLOPs for all models, the spatial entropy of the atoms with a histogram and the atom galleries, colour-factor cleanliness with a chromaticity plot, the intervention-linearity R² (measured directly at the decoder and after re-encoding the edited image) with predicted-against-actual scatter plots, the coefficient of variation of the intervention strength across training, L0 and activation histograms, and an editing demo that removes an image's strongest atom and adds a spatially localised one. Every table prints the paper's number next to the reproduced one where the abstract gives one, and says "not reported in abstract" otherwise.
 
-All outputs land in `results/` as CSV, JSON and PNG, with a checkpoint for every trained model, so a Colab restart resumes from what is finished.
+All outputs land in `results/` as CSV, JSON and PNG, with a checkpoint for every trained model, so an interrupted run resumes from what is finished.
 
 ## How to run
 
@@ -24,7 +24,7 @@ The first code cell has a `RUN_MODE` switch.
 
 `smoke` runs in about three minutes on a two-core CPU. It downloads nothing: the images are synthetic 32×32 scenes of coloured rectangles and blobs laid out on a 4×4 grid, the dictionaries have 32, 64 and 128 atoms, and the ConvAE gets 6 epochs to the SAEs' 40 because convolutions dominate CPU time. Its numbers test the code paths, not the paper's claims.
 
-`full` downloads CIFAR-10 through torchvision, trains Tensor-SAEs with 1024, 2048 and 4096 atoms with their matched Dense-SAEs and ConvAEs for 30 epochs each, and runs every analysis on the 4096-atom triple. I estimate 30 to 60 minutes on a free Colab T4; the SAEs are cheap and the ConvAEs take most of it. Every count is a field of `Config`.
+`full` downloads CIFAR-10 through torchvision, trains Tensor-SAEs with 1024, 2048 and 4096 atoms with their matched Dense-SAEs and ConvAEs for 30 epochs each, and runs every analysis on the 4096-atom triple. I estimate 30 to 60 minutes on a T4; the SAEs are cheap and the ConvAEs take most of it. Every count is a field of `Config`.
 
 To run locally:
 
@@ -33,7 +33,7 @@ To run locally:
 - `TSAE_RUN_MODE=full python tensor_sae_colab.py`
 - `python build_notebook.py`
 
-Set `SAVE_TO_DRIVE = True` in the first cell to mirror `results/` to Google Drive at the end of a Colab run.
+Set `SAVE_TO_DRIVE = True` in the first cell to mirror `results/` to Google Drive at the end of a run.
 
 ## What differs from the paper
 
@@ -51,7 +51,7 @@ FLOPs are analytic multiply-adds of the forward pass as implemented. A rank-one 
 
 Spatial entropy is the Shannon entropy of the atom's spatial energy map `Σ_c |a_k[c, h, w]|` normalised to sum to one. Colour cleanliness is the angle to the nearest of the red, green, blue and grey axes; for Dense-SAE atoms the colour vector is the leading singular vector of the atom reshaped to 3×1024. These are my definitions of the abstract's "low-entropy spatial atoms" and "clean colour factors".
 
-I have run the smoke path end to end. The full path is written for a Colab T4 and was not executed on the machine where this repository was assembled.
+I have run the smoke path end to end. The full path needs a GPU and was not executed on the machine where this repository was assembled.
 
 ## Citation
 
